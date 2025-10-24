@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Craxs RAT - Advanced Remote Access Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --background: #1a1a1a;
+            --foreground: #fafafa;
+            --card: #2d2d2d;
+            --card-foreground: #fafafa;
+            --muted: #404040;
+            --muted-foreground: #999999;
+            --border: #404040;
+            --primary: #dc2626;
+            --primary-foreground: #fafafa;
+        }
+
+        * {
+            border-color: var(--border);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--foreground);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .bg-background { background-color: var(--background); }
+        .bg-card { background-color: var(--card); }
+        .bg-muted { background-color: var(--muted); }
+        .text-foreground { color: var(--foreground); }
+        .text-muted-foreground { color: var(--muted-foreground); }
+        .border-border { border-color: var(--border); }
+        .bg-red-600 { background-color: #dc2626; }
+        .hover\:bg-red-700:hover { background-color: #b91c1c; }
+        .text-red-600 { color: #dc2626; }
+
+        .card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #0088cc;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0077b3;
+        }
+
+        .btn-outline {
+            border: 1px solid #dc2626;
+            color: #dc2626;
+            background-color: transparent;
+        }
+
+        .btn-outline:hover {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--muted-foreground);
+            margin-bottom: 2rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background-color: transparent;
+            color: var(--foreground);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background-color: #dc2626;
+            border-color: #dc2626;
+            color: white;
+        }
+
+        .lang-btn:hover {
+            border-color: #dc2626;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: #dc2626;
+            color: white;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon {
+            width: 3rem;
+            height: 3rem;
+            margin: 0 auto 1rem;
+        }
+
+        .pricing-card {
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border: 2px solid #dc2626;
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.2);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #dc2626;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .check-icon {
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            background-color: #dc2626;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: var(--foreground);
+        }
+
+        .feature-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border);
+            background-color: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            padding: 5rem 1rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-balance {
+            text-wrap: balance;
+        }
+
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-12 { margin-bottom: 3rem; }
+        .mb-16 { margin-bottom: 4rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .w-full { width: 100%; }
+        .max-w-2xl { max-width: 42rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+
+        .bg-muted-20 {
+            background-color: rgba(64, 64, 64, 0.2);
+        }
+
+        .border-t {
+            border-top: 1px solid var(--border);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+            section {
+                padding: 3rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground">
+    <!-- Header -->
+    <header class="border-border">
+        <div class="container flex items-center justify-between py-6">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">C</span>
+                </div>
+                <span class="text-xl font-bold text-foreground">Craxs RAT</span>
+            </div>
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="#features" class="text-muted-foreground hover:text-foreground transition-colors">Features</a>
+                <a href="#pricing" class="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
+                <a href="#videos" class="text-muted-foreground hover:text-foreground transition-colors">Videos</a>
+                <a href="#contact" class="text-muted-foreground hover:text-foreground transition-colors">Contact</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <select id="languageSelect" class="lang-btn" onchange="changeLanguage(this.value)">
+                    <option value="en">🇺🇸 English</option>
+                    <option value="br">🇧🇷 Português</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="nl">🇳🇱 Nederlands</option>
+                    <option value="ca">🇨🇦 English (CA)</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-20 px-4">
+        <div class="container mx-auto text-center">
+            <div class="mb-6">
+                <span class="badge" id="heroBadge">Craxs RAT v8.0 - Always Getting Better</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-foreground mb-6 text-balance" id="heroTitle">
+                Craxs RAT - Advanced Remote Access Tool
+            </h1>
+            <p class="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto text-pretty" id="heroDescription">
+                The most powerful and professional remote access tool for cybersecurity experts. Craxs RAT offers advanced monitoring, global access capabilities, and comprehensive security features.
+            </p>
+            <div class="mb-12">
+                <a href="https://t.me/CRAXSRATDL" target="_blank" rel="noopener noreferrer" class="btn btn-primary" id="telegramBtn">
+                    <svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z" />
+                    </svg>
+                    Join Telegram
+                </a>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span class="w-4 h-4 text-red-600">🛡️</span>
+                    <span id="heroFeature1">Professional Security Tool</span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span class="w-4 h-4 text-red-600">🌍</span>
+                    <span id="heroFeature2">Global Access</span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span class="w-4 h-4 text-red-600">📊</span>
+                    <span id="heroFeature3">Real-time Monitoring</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase Section -->
+    <section class="py-20 px-4 bg-muted-20">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="section-title" id="showcaseTitle">Craxs RAT Dashboard</h2>
+                <p class="section-subtitle" id="showcaseSubtitle">Experience the power of advanced remote access technology</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="w-full h-48 bg-muted rounded mb-4 flex items-center justify-center">
+                        <span class="text-muted-foreground">Dashboard Image 1</span>
+                    </div>
+                    <h3 class="font-semibold mb-2" id="showcaseCard1Title">Global Monitoring</h3>
+                    <p class="text-sm text-muted-foreground" id="showcaseCard1Desc">Real-time global access tracking with interactive world map visualization</p>
+                </div>
+
+                <div class="card">
+                    <div class="w-full h-48 bg-muted rounded mb-4 flex items-center justify-center">
+                        <span class="text-muted-foreground">Dashboard Image 2</span>
+                    </div>
+                    <h3 class="font-semibold mb-2" id="showcaseCard2Title">Advanced Dashboard</h3>
+                    <p class="text-sm text-muted-foreground" id="showcaseCard2Desc">Comprehensive control panel with detailed statistics and monitoring tools</p>
+                </div>
+
+                <div class="card">
+                    <div class="w-full h-48 bg-muted rounded mb-4 flex items-center justify-center">
+                        <span class="text-muted-foreground">Dashboard Image 3</span>
+                    </div>
+                    <h3 class="font-semibold mb-2" id="showcaseCard3Title">Latest Updates</h3>
+                    <p class="text-sm text-muted-foreground" id="showcaseCard3Desc">Craxs RAT v8.0 with enhanced features and improved performance</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="section-title" id="featuresTitle">Why Choose Craxs RAT?</h2>
+                <p class="section-subtitle" id="featuresSubtitle">Professional-grade remote access tool trusted by cybersecurity experts worldwide</p>
+            </div>
+
+            <div class="grid-4">
+                <div class="card text-center">
+                    <div class="feature-icon">🛡️</div>
+                    <h3 class="font-semibold mb-2" id="feature1Title">Advanced Security</h3>
+                    <p class="text-sm text-muted-foreground" id="feature1Desc">Military-grade encryption and security protocols</p>
+                </div>
+
+                <div class="card text-center">
+                    <div class="feature-icon">🌍</div>
+                    <h3 class="font-semibold mb-2" id="feature2Title">Global Access</h3>
+                    <p class="text-sm text-muted-foreground" id="feature2Desc">Worldwide connectivity with real-time monitoring</p>
+                </div>
+
+                <div class="card text-center">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="font-semibold mb-2" id="feature3Title">Live Monitoring</h3>
+                    <p class="text-sm text-muted-foreground" id="feature3Desc">Real-time system monitoring and control</p>
+                </div>
+
+                <div class="card text-center">
+                    <div class="feature-icon">⚙️</div>
+                    <h3 class="font-semibold mb-2" id="feature4Title">Easy Configuration</h3>
+                    <p class="text-sm text-muted-foreground" id="feature4Desc">User-friendly interface with advanced settings</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 px-4">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="section-title" id="pricingTitle">Craxs RAT Pricing Plans</h2>
+                <p class="section-subtitle" id="pricingSubtitle">Choose the perfect Craxs RAT license for your needs</p>
+            </div>
+
+            <div class="grid-3">
+                <!-- Monthly Plan -->
+                <div class="card pricing-card">
+                    <div class="text-center pb-8">
+                        <h3 class="text-2xl font-bold" id="plan1Name">Monthly</h3>
+                        <p class="text-muted-foreground" id="plan1Desc">Perfect for getting started</p>
+                        <div class="mt-4">
+                            <span class="text-4xl font-bold text-foreground" id="plan1Price">$99</span>
+                            <span class="text-muted-foreground" id="plan1Period">/month</span>
+                        </div>
+                    </div>
+
+                    <ul class="feature-list mb-6">
+                        <li><span class="check-icon"></span><span id="plan1Feature1">Full software access</span></li>
+                        <li><span class="check-icon"></span><span id="plan1Feature2">Regular updates</span></li>
+                        <li><span class="check-icon"></span><span id="plan1Feature3">Email support</span></li>
+                        <li><span class="check-icon"></span><span id="plan1Feature4">License key included</span></li>
+                    </ul>
+
+                    <button class="btn btn-outline w-full" id="plan1Btn">Get Craxs RAT Monthly</button>
+                </div>
+
+                <!-- Yearly Plan (Featured) -->
+                <div class="card pricing-card featured">
+                    <div class="pricing-badge" id="featuredBadge">Most Popular</div>
+                    <div class="text-center pb-8">
+                        <h3 class="text-2xl font-bold" id="plan2Name">Yearly</h3>
+                        <p class="text-muted-foreground" id="plan2Desc">Best value for professionals</p>
+                        <div class="mt-4">
+                            <span class="text-4xl font-bold text-foreground" id="plan2Price">$299</span>
+                            <span class="text-muted-foreground" id="plan2Period">/year</span>
+                        </div>
+                    </div>
+
+                    <ul class="feature-list mb-6">
+                        <li><span class="check-icon"></span><span id="plan2Feature1">Full software access</span></li>
+                        <li><span class="check-icon"></span><span id="plan2Feature2">Regular updates</span></li>
+                        <li><span class="check-icon"></span><span id="plan2Feature3">Priority support</span></li>
+                        <li><span class="check-icon"></span><span id="plan2Feature4">License key included</span></li>
+                        <li><span class="check-icon"></span><span id="plan2Feature5">Save $889 vs monthly</span></li>
+                    </ul>
+
+                    <button class="btn btn-primary w-full" id="plan2Btn">Get Craxs RAT Yearly</button>
+                </div>
+
+                <!-- Lifetime Plan -->
+                <div class="card pricing-card">
+                    <div class="text-center pb-8">
+                        <h3 class="text-2xl font-bold" id="plan3Name">Lifetime</h3>
+                        <p class="text-muted-foreground" id="plan3Desc">One-time payment, forever access</p>
+                        <div class="mt-4">
+                            <span class="text-4xl font-bold text-foreground" id="plan3Price">$999</span>
+                            <span class="text-muted-foreground" id="plan3Period">/lifetime</span>
+                        </div>
+                    </div>
+
+                    <ul class="feature-list mb-6">
+                        <li><span class="check-icon"></span><span id="plan3Feature1">Full software access</span></li>
+                        <li><span class="check-icon"></span><span id="plan3Feature2">Lifetime updates</span></li>
+                        <li><span class="check-icon"></span><span id="plan3Feature3">Priority support</span></li>
+                        <li><span class="check-icon"></span><span id="plan3Feature4">License key included</span></li>
+                        <li><span class="check-icon"></span><span id="plan3Feature5">All future features</span></li>
+                        <li><span class="check-icon"></span><span id="plan3Feature6">Best value</span></li>
+                    </ul>
+
+                    <button class="btn btn-outline w-full" id="plan3Btn">Get Craxs RAT Lifetime</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="border-t border-border py-12 px-4">
+        <div class="container mx-auto">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center gap-2 mb-4">
+                    <div class="w-6 h-6 bg-red-600 rounded flex items-center justify-center">
+                        <span class="text-white font-bold text-xs">C</span>
+                    </div>
+                    <span class="text-lg font-semibold text-foreground">Craxs RAT</span>
+                </div>
+                <div class="mb-6">
+                    <a href="https://t.me/CRAXSRATDL" target="_blank" rel="noopener noreferrer" class="btn btn-outline" id="footerTelegramBtn">
+                        <svg class="w-4 h-4 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z" />
+                        </svg>
+                        Join Telegram
+                    </a>
+                </div>
+                <div class="flex flex-wrap justify-center gap-6 mb-6 text-sm">
+                    <a href="#privacy" class="text-muted-foreground hover:text-foreground transition-colors" id="privacyLink">Privacy Policy</a>
+                    <a href="#about" class="text-muted-foreground hover:text-foreground transition-colors" id="aboutLink">About Us</a>
+                    <a href="#disclaimer" class="text-muted-foreground hover:text-foreground transition-colors" id="disclaimerLink">Disclaimer</a>
+                    <a href="#contact" class="text-muted-foreground hover:text-foreground transition-colors" id="contactLink">Contact Us</a>
+                </div>
+                <p class="text-muted-foreground mb-4" id="copyrightText">© 2025 Craxs Software. Professional remote access tool for cybersecurity experts.</p>
+                <p class="text-sm text-muted-foreground" id="disclaimerText">Craxs RAT is designed for authorized cybersecurity professionals and ethical hackers only.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Translation data
+        const translations = {
+            en: {
+                heroBadge: "Craxs RAT v8.0 - Always Getting Better",
+                heroTitle: "Craxs RAT - Advanced Remote Access Tool",
+                heroDescription: "The most powerful and professional remote access tool for cybersecurity experts. Craxs RAT offers advanced monitoring, global access capabilities, and comprehensive security features.",
+                telegramBtn: "Join Telegram",
+                heroFeature1: "Professional Security Tool",
+                heroFeature2: "Global Access",
+                heroFeature3: "Real-time Monitoring",
+                showcaseTitle: "Craxs RAT Dashboard",
+                showcaseSubtitle: "Experience the power of advanced remote access technology",
+                showcaseCard1Title: "Global Monitoring",
+                showcaseCard1Desc: "Real-time global access tracking with interactive world map visualization",
+                showcaseCard2Title: "Advanced Dashboard",
+                showcaseCard2Desc: "Comprehensive control panel with detailed statistics and monitoring tools",
+                showcaseCard3Title: "Latest Updates",
+                showcaseCard3Desc: "Craxs RAT v8.0 with enhanced features and improved performance",
+                featuresTitle: "Why Choose Craxs RAT?",
+                featuresSubtitle: "Professional-grade remote access tool trusted by cybersecurity experts worldwide",
+                feature1Title: "Advanced Security",
+                feature1Desc: "Military-grade encryption and security protocols",
+                feature2Title: "Global Access",
+                feature2Desc: "Worldwide connectivity with real-time monitoring",
+                feature3Title: "Live Monitoring",
+                feature3Desc: "Real-time system monitoring and control",
+                feature4Title: "Easy Configuration",
+                feature4Desc: "User-friendly interface with advanced settings",
+                pricingTitle: "Craxs RAT Pricing Plans",
+                pricingSubtitle: "Choose the perfect Craxs RAT license for your needs",
+                plan1Name: "Monthly",
+                plan1Desc: "Perfect for getting started",
+                plan1Price: "$99",
+                plan1Period: "/month",
+                plan1Feature1: "Full software access",
+                plan1Feature2: "Regular updates",
+                plan1Feature3: "Email support",
+                plan1Feature4: "License key included",
+                plan1Btn: "Get Craxs RAT Monthly",
+                plan2Name: "Yearly",
+                plan2Desc: "Best value for professionals",
+                plan2Price: "$299",
+                plan2Period: "/year",
+                plan2Feature1: "Full software access",
+                plan2Feature2: "Regular updates",
+                plan2Feature3: "Priority support",
+                plan2Feature4: "License key included",
+                plan2Feature5: "Save $889 vs monthly",
+                plan2Btn: "Get Craxs RAT Yearly",
+                plan3Name: "Lifetime",
+                plan3Desc: "One-time payment, forever access",
+                plan3Price: "$999",
+                plan3Period: "/lifetime",
+                plan3Feature1: "Full software access",
+                plan3Feature2: "Lifetime updates",
+                plan3Feature3: "Priority support",
+                plan3Feature4: "License key included",
+                plan3Feature5: "All future features",
+                plan3Feature6: "Best value",
+                plan3Btn: "Get Craxs RAT Lifetime",
+                featuredBadge: "Most Popular",
+                footerTelegramBtn: "Join Telegram",
+                privacyLink: "Privacy Policy",
+                aboutLink: "About Us",
+                disclaimerLink: "Disclaimer",
+                contactLink: "Contact Us",
+                copyrightText: "© 2025 Craxs Software. Professional remote access tool for cybersecurity experts.",
+                disclaimerText: "Craxs RAT is designed for authorized cybersecurity professionals and ethical hackers only."
+            },
+            br: {
+                heroBadge: "Craxs RAT v8.0 - Sempre Melhorando",
+                heroTitle: "Craxs RAT - Ferramenta Avançada de Acesso Remoto",
+                heroDescription: "A ferramenta de acesso remoto mais poderosa e profissional para especialistas em cibersegurança. Craxs RAT oferece monitoramento avançado, capacidades de acesso global e recursos de segurança abrangentes.",
+                telegramBtn: "Entrar no Telegram",
+                heroFeature1: "Ferramenta de Segurança Profissional",
+                heroFeature2: "Acesso Global",
+                heroFeature3: "Monitoramento em Tempo Real",
+                showcaseTitle: "Painel Craxs RAT",
+                showcaseSubtitle: "Experimente o poder da tecnologia avançada de acesso remoto",
+                showcaseCard1Title: "Monitoramento Global",
+                showcaseCard1Desc: "Rastreamento de acesso global em tempo real com visualização de mapa mundial interativo",
+                showcaseCard2Title: "Painel Avançado",
+                showcaseCard2Desc: "Painel de controle abrangente com estatísticas detalhadas e ferramentas de monitoramento",
+                showcaseCard3Title: "Atualizações Recentes",
+                showcaseCard3Desc: "Craxs RAT v8.0 com recursos aprimorados e desempenho melhorado",
+                featuresTitle: "Por Que Escolher Craxs RAT?",
+                featuresSubtitle: "Ferramenta de acesso remoto de nível profissional confiada por especialistas em cibersegurança em todo o mundo",
+                feature1Title: "Segurança Avançada",
+                feature1Desc: "Criptografia de nível militar e protocolos de segurança",
+                feature2Title: "Acesso Global",
+                feature2Desc: "Conectividade mundial com monitoramento em tempo real",
+                feature3Title: "Monitoramento ao Vivo",
+                feature3Desc: "Monitoramento e controle do sistema em tempo real",
+                feature4Title: "Configuração Fácil",
+                feature4Desc: "Interface amigável com configurações avançadas",
+                pricingTitle: "Planos de Preços Craxs RAT",
+                pricingSubtitle: "Escolha a licença Craxs RAT perfeita para suas necessidades",
+                plan1Name: "Mensal",
+                plan1Desc: "Perfeito para começar",
+                plan1Price: "$99",
+                plan1Period: "/mês",
+                plan1Feature1: "Acesso completo ao software",
+                plan1Feature2: "Atualizações regulares",
+                plan1Feature3: "Suporte por e-mail",
+                plan1Feature4: "Chave de licença incluída",
+                plan1Btn: "Obter Craxs RAT Mensal",
+                plan2Name: "Anual",
+                plan2Desc: "Melhor valor para profissionais",
+                plan2Price: "$299",
+                plan2Period: "/ano",
+                plan2Feature1: "Acesso completo ao software",
+                plan2Feature2: "Atualizações regulares",
+                plan2Feature3: "Suporte prioritário",
+                plan2Feature4: "Chave de licença incluída",
+                plan2Feature5: "Economize $889 vs mensal",
+                plan2Btn: "Obter Craxs RAT Anual",
+                plan3Name: "Vitalício",
+                plan3Desc: "Pagamento único, acesso para sempre",
+                plan3Price: "$999",
+                plan3Period: "/vitalício",
+                plan3Feature1: "Acesso completo ao software",
+                plan3Feature2: "Atualizações vitalícias",
+                plan3Feature3: "Suporte prioritário",
+                plan3Feature4: "Chave de licença incluída",
+                plan3Feature5: "Todos os recursos futuros",
+                plan3Feature6: "Melhor valor",
+                plan3Btn: "Obter Craxs RAT Vitalício",
+                featuredBadge: "Mais Popular",
+                footerTelegramBtn: "Entrar no Telegram",
+                privacyLink: "Política de Privacidade",
+                aboutLink: "Sobre Nós",
+                disclaimerLink: "Aviso Legal",
+                contactLink: "Contate-nos",
+                copyrightText: "© 2025 Craxs Software. Ferramenta de acesso remoto profissional para especialistas em cibersegurança.",
+                disclaimerText: "Craxs RAT é projetado apenas para profissionais de cibersegurança autorizados e hackers éticos."
+            },
+            de: {
+                heroBadge: "Craxs RAT v8.0 - Immer Besser",
+                heroTitle: "Craxs RAT - Fortschrittliches Remote-Access-Tool",
+                heroDescription: "Das leistungsstärkste und professionellste Remote-Access-Tool für Cybersicherheitsexperten. Craxs RAT bietet geavanceerde Monitoring, globale Zugriffsmöglichkeiten und umfassende Sicherheitsfunktionen.",
+                telegramBtn: "Telegram Beitreten",
+                heroFeature1: "Professionelles Sicherheitstool",
+                heroFeature2: "Globaler Zugriff",
+                heroFeature3: "Echtzeit-Überwachung",
+                showcaseTitle: "Craxs RAT Dashboard",
+                showcaseSubtitle: "Erleben Sie die Kraft fortschrittlicher Remote-Access-Technologie",
+                showcaseCard1Title: "Globale Überwachung",
+                showcaseCard1Desc: "Echtzeit-Zugriffsverfolgung mit interaktiver Weltkarten-Visualisierung",
+                showcaseCard2Title: "Fortschrittliches Dashboard",
+                showcaseCard2Desc: "Umfassendes Kontrollpanel mit gedetailleerten Statistiken und Monitoringtools",
+                showcaseCard3Title: "Neueste Updates",
+                showcaseCard3Desc: "Craxs RAT v8.0 mit erweiterten Funktionen und verbesserter Leistung",
+                featuresTitle: "Warum Craxs RAT wählen?",
+                featuresSubtitle: "Professionelles Remote-Access-Tool, dem Cybersicherheitsexperten weltweit vertrauen",
+                feature1Title: "Erweiterte Sicherheit",
+                feature1Desc: "Militärische Verschlüsselung und Sicherheitsprotokolle",
+                feature2Title: "Globaler Zugriff",
+                feature2Desc: "Weltweite Konnektivität mit Echtzeit-Überwachung",
+                feature3Title: "Live-Überwachung",
+                feature3Desc: "Echtzeit-Systemüberwachung und -steuerung",
+                feature4Title: "Einfache Konfiguration",
+                feature4Desc: "Benutzerfreundliche Oberfläche mit erweiterten Einstellungen",
+                pricingTitle: "Craxs RAT Preispläne",
+                pricingSubtitle: "Wählen Sie die perfekte Craxs RAT-Lizenz für Ihre Bedürfnisse",
+                plan1Name: "Monatlich",
+                plan1Desc: "Perfekt für den Einstieg",
+                plan1Price: "$99",
+                plan1Period: "/Monat",
+                plan1Feature1: "Vollständiger Software-Zugriff",
+                plan1Feature2: "Regelmäßige Updates",
+                plan1Feature3: "E-Mail-Support",
+                plan1Feature4: "Lizenzschlüssel enthalten",
+                plan1Btn: "Craxs RAT Monatlich erhalten",
+                plan2Name: "Jährlich",
+                plan2Desc: "Bester Wert für Profis",
+                plan2Price: "$299",
+                plan2Period: "/Jahr",
+                plan2Feature1: "Vollständiger Software-Zugriff",
+                plan2Feature2: "Regelmäßige Updates",
+                plan2Feature3: "Prioritäts-Support",
+                plan2Feature4: "Lizenzschlüssel enthalten",
+                plan2Feature5: "Sparen Sie $889 vs monatlich",
+                plan2Btn: "Craxs RAT Jährlich erhalten",
+                plan3Name: "Lebenslang",
+                plan3Desc: "Einmalige Zahlung, lebenslanger Zugang",
+                plan3Price: "$999",
+                plan3Period: "/lebenslang",
+                plan3Feature1: "Vollständiger Software-Zugriff",
+                plan3Feature2: "Lebenslange Updates",
+                plan3Feature3: "Prioritäts-Support",
+                plan3Feature4: "Lizenzschlüssel enthalten",
+                plan3Feature5: "Alle zukünftigen Funktionen",
+                plan3Feature6: "Bester Wert",
+                plan3Btn: "Craxs RAT Lebenslang erhalten",
+                featuredBadge: "Am beliebtesten",
+                footerTelegramBtn: "Telegram Beitreten",
+                privacyLink: "Datenschutzrichtlinie",
+                aboutLink: "Über uns",
+                disclaimerLink: "Haftungsausschluss",
+                contactLink: "Kontaktieren Sie uns",
+                copyrightText: "© 2025 Craxs Software. Professionelles Remote-Access-Tool für Cybersicherheitsexperten.",
+                disclaimerText: "Craxs RAT ist nur für geautoriseerde Cyberbeveiligingsprofessionals en ethische hackers konzipiert."
+            },
+            fr: {
+                heroBadge: "Craxs RAT v8.0 - Toujours Mieux",
+                heroTitle: "Craxs RAT - Outil d'Accès à Distance Avancé",
+                heroDescription: "L'outil d'accès à distance le plus puissant et professionnel pour les experts en cybersécurité. Craxs RAT offre une surveillance avancée, des capacités d'accès mondial et des fonctionnalités de sécurité complètes.",
+                telegramBtn: "Rejoindre Telegram",
+                heroFeature1: "Outil de Sécurité Professionnel",
+                heroFeature2: "Accès Mondial",
+                heroFeature3: "Surveillance en Temps Réel",
+                showcaseTitle: "Tableau de Bord Craxs RAT",
+                showcaseSubtitle: "Découvrez la puissance de la technologie d'accès à distance avancée",
+                showcaseCard1Title: "Surveillance Mondiale",
+                showcaseCard1Desc: "Suivi d'accès mondial en temps réel avec visualisation de carte mondiale interactive",
+                showcaseCard2Title: "Tableau de Bord Avancé",
+                showcaseCard2Desc: "Panneau de contrôle complet avec statistiques détaillées et outils de surveillance",
+                showcaseCard3Title: "Dernières Mises à Jour",
+                showcaseCard3Desc: "Craxs RAT v8.0 avec fonctionnalités améliorées et performances optimisées",
+                featuresTitle: "Pourquoi Choisir Craxs RAT?",
+                featuresSubtitle: "Outil d'accès à distance de qualité professionnelle approuvé par les experts en cybersécurité du monde entier",
+                feature1Title: "Sécurité Avancée",
+                feature1Desc: "Chiffrement de niveau militaire et protocoles de sécurité",
+                feature2Title: "Accès Mondial",
+                feature2Desc: "Connectivité mondiale avec surveillance en temps réel",
+                feature3Title: "Surveillance en Direct",
+                feature3Desc: "Surveillance et contrôle du système en temps réel",
+                feature4Title: "Configuration Facile",
+                feature4Desc: "Interface conviviale avec paramètres avancés",
+                pricingTitle: "Plans Tarifaires Craxs RAT",
+                pricingSubtitle: "Choisissez la licence Craxs RAT parfaite pour vos besoins",
+                plan1Name: "Mensuel",
+                plan1Desc: "Parfait pour commencer",
+                plan1Price: "$99",
+                plan1Period: "/mois",
+                plan1Feature1: "Accès complet au logiciel",
+                plan1Feature2: "Mises à jour régulières",
+                plan1Feature3: "Support par e-mail",
+                plan1Feature4: "Clé de licence incluse",
+                plan1Btn: "Obtenir Craxs RAT Mensuel",
+                plan2Name: "Annuel",
+                plan2Desc: "Meilleur rapport qualité-prix pour les professionnels",
+                plan2Price: "$299",
+                plan2Period: "/an",
+                plan2Feature1: "Accès complet au logiciel",
+                plan2Feature2: "Mises à jour régulières",
+                plan2Feature3: "Support prioritaire",
+                plan2Feature4: "Clé de licence incluse",
+                plan2Feature5: "Économisez $889 vs mensuel",
+                plan2Btn: "Obtenir Craxs RAT Annuel",
+                plan3Name: "À vie",
+                plan3Desc: "Paiement unique, accès à vie",
+                plan3Price: "$999",
+                plan3Period: "/à vie",
+                plan3Feature1: "Accès complet au logiciel",
+                plan3Feature2: "Mises à jour à vie",
+                plan3Feature3: "Support prioritaire",
+                plan3Feature4: "Clé de licence incluse",
+                plan3Feature5: "Toutes les futures fonctionnalités",
+                plan3Feature6: "Meilleur rapport qualité-prix",
+                plan3Btn: "Obtenir Craxs RAT À vie",
+                featuredBadge: "Le Plus Populaire",
+                footerTelegramBtn: "Rejoindre Telegram",
+                privacyLink: "Politique de Confidentialité",
+                aboutLink: "À propos de nous",
+                disclaimerLink: "Avertissement",
+                contactLink: "Contactez-nous",
+                copyrightText: "© 2025 Craxs Software. Outil d'accès à distance professionnel pour les experts en cybersécurité.",
+                disclaimerText: "Craxs RAT est conçu uniquement pour les professionnels de la cybersécurité autorisés et les hackers éthiques."
+            },
+            nl: {
+                heroBadge: "Craxs RAT v8.0 - Altijd Beter",
+                heroTitle: "Craxs RAT - Geavanceerde Remote Access Tool",
+                heroDescription: "De krachtigste en meest professionele remote access tool voor cyberbeveiligingsexperts. Craxs RAT biedt geavanceerde monitoring, wereldwijde toegangsmogelijkheden en uitgebreide beveiligingsfuncties.",
+                telegramBtn: "Word lid van Telegram",
+                heroFeature1: "Professionele Beveiligingstool",
+                heroFeature2: "Wereldwijde Toegang",
+                heroFeature3: "Realtime Monitoring",
+                showcaseTitle: "Craxs RAT Dashboard",
+                showcaseSubtitle: "Ervaar de kracht van geavanceerde remote access technologie",
+                showcaseCard1Title: "Wereldwijde Monitoring",
+                showcaseCard1Desc: "Realtime wereldwijde toegangsregistratie met interactieve wereldkaart visualisatie",
+                showcaseCard2Title: "Geavanceerd Dashboard",
+                showcaseCard2Desc: "Uitgebreid controlepaneel met gedetailleerde statistieken en monitoringtools",
+                showcaseCard3Title: "Nieuwste Updates",
+                showcaseCard3Desc: "Craxs RAT v8.0 met verbeterde functies en verbeterde prestaties",
+                featuresTitle: "Waarom Craxs RAT Kiezen?",
+                featuresSubtitle: "Professionele remote access tool vertrouwd door cyberbeveiligingsexperts wereldwijd",
+                feature1Title: "Geavanceerde Beveiliging",
+                feature1Desc: "Militaire encryptie en beveiligingsprotocollen",
+                feature2Title: "Wereldwijde Toegang",
+                feature2Desc: "Wereldwijde connectiviteit met realtime monitoring",
+                feature3Title: "Live Monitoring",
+                feature3Desc: "Realtime systeemmonitoring en -controle",
+                feature4Title: "Eenvoudige Configuratie",
+                feature4Desc: "Gebruiksvriendelijke interface met geavanceerde instellingen",
+                pricingTitle: "Craxs RAT Prijsplannen",
+                pricingSubtitle: "Kies de perfecte Craxs RAT licentie voor uw behoeften",
+                plan1Name: "Maandelijks",
+                plan1Desc: "Perfect om te beginnen",
+                plan1Price: "$99",
+                plan1Period: "/maand",
+                plan1Feature1: "Volledige softwaretoegang",
+                plan1Feature2: "Regelmatige updates",
+                plan1Feature3: "E-mailondersteuning",
+                plan1Feature4: "Licentiesleutel inbegrepen",
+                plan1Btn: "Craxs RAT Maandelijks Krijgen",
+                plan2Name: "Jaarlijks",
+                plan2Desc: "Beste waarde voor professionals",
+                plan2Price: "$299",
+                plan2Period: "/jaar",
+                plan2Feature1: "Volledige softwaretoegang",
+                plan2Feature2: "Regelmatige updates",
+                plan2Feature3: "Prioriteitsondersteuning",
+                plan2Feature4: "Licentiesleutel inbegrepen",
+                plan2Feature5: "Bespaar $889 vs maandelijks",
+                plan2Btn: "Craxs RAT Jaarlijks Krijgen",
+                plan3Name: "Levenslang",
+                plan3Desc: "Eenmalige betaling, levenslange toegang",
+                plan3Price: "$999",
+                plan3Period: "/levenslang",
+                plan3Feature1: "Volledige softwaretoegang",
+                plan3Feature2: "Levenslange updates",
+                plan3Feature3: "Prioriteitsondersteuning",
+                plan3Feature4: "Licentiesleutel inbegrepen",
+                plan3Feature5: "Alle toekomstige functies",
+                plan3Feature6: "Beste waarde",
+                plan3Btn: "Craxs RAT Levenslang Krijgen",
+                featuredBadge: "Meest Populair",
+                footerTelegramBtn: "Word lid van Telegram",
+                privacyLink: "Privacybeleid",
+                aboutLink: "Over ons",
+                disclaimerLink: "Disclaimer",
+                contactLink: "Neem contact op",
+                copyrightText: "© 2025 Craxs Software. Professionele remote access tool voor cyberbeveiligingsexperts.",
+                disclaimerText: "Craxs RAT is alleen ontworpen voor geautoriseerde cyberbeveiligingsprofessionals en ethische hackers."
+            },
+            ca: {
+                heroBadge: "Craxs RAT v8.0 - Sempre Millorant",
+                heroTitle: "Craxs RAT - Eina d'Accés Remot Avançada",
+                heroDescription: "L'eina d'accés remot més potentosa i professional per als experts en ciberseguretat. Craxs RAT ofereix una supervisió avançada, capacitats d'accés global i funcions de seguretat completes.",
+                telegramBtn: "Uneix-te a Telegram",
+                heroFeature1: "Eina de Seguretat Professional",
+                heroFeature2: "Accés Global",
+                heroFeature3: "Supervisió en Temps Real",
+                showcaseTitle: "Tauler de Control Craxs RAT",
+                showcaseSubtitle: "Experimenta la força de la tecnologia d'accés remot avançada",
+                showcaseCard1Title: "Supervisió Global",
+                showcaseCard1Desc: "Seguiment d'accés global en temps real amb visualització de mapa mundial interactiu",
+                showcaseCard2Title: "Tauler de Control Avançat",
+                showcaseCard2Desc: "Panell de control complet amb estadístiques detallades i eines de supervisió",
+                showcaseCard3Title: "Últimes Actualitzacions",
+                showcaseCard3Desc: "Craxs RAT v8.0 amb funcions millorades i rendiment optimitzat",
+                featuresTitle: "Per Què Escollires Craxs RAT?",
+                featuresSubtitle: "Eina d'accés remot de qualitat professional confiatada per als experts en ciberseguretat del món.",
+                feature1Title: "Seguretat Avançada",
+                feature1Desc: "Xifratge de nivell militar i protocols de seguretat",
+                feature2Title: "Accés Global",
+                feature2Desc: "Connectivitat mundial amb supervisió en temps real",
+                feature3Title: "Supervisió en Directe",
+                feature3Desc: "Supervisió i control del sistema en temps real",
+                feature4Title: "Configuració Fàcil",
+                feature4Desc: "Interfície amigable amb paràmetres avançats",
+                pricingTitle: "Plans de Preus Craxs RAT",
+                pricingSubtitle: "Tria la llicència Craxs RAT perfecta per als teus necessitats",
+                plan1Name: "Mensual",
+                plan1Desc: "Perfecte per començar",
+                plan1Price: "$99",
+                plan1Period: "/mes",
+                plan1Feature1: "Accés complet al programari",
+                plan1Feature2: "Actualitzacions regulars",
+                plan1Feature3: "Suport per correu electrònic",
+                plan1Feature4: "Clau de llicència inclosa",
+                plan1Btn: "Obtenir Craxs RAT Mensual",
+                plan2Name: "Anual",
+                plan2Desc: "Millor valor per als professionals",
+                plan2Price: "$299",
+                plan2Period: "/any",
+                plan2Feature1: "Accés complet al programari",
+                plan2Feature2: "Actualitzacions regulars",
+                plan2Feature3: "Suport prioritari",
+                plan2Feature4: "Clau de llicència inclosa",
+                plan2Feature5: "Economit $889 vs mensual",
+                plan2Btn: "Obtenir Craxs RAT Anual",
+                plan3Name: "Per a la vida",
+                plan3Desc: "Pagament únic, accés per a la vida",
+                plan3Price: "$999",
+                plan3Period: "/per a la vida",
+                plan3Feature1: "Accés complet al programari",
+                plan3Feature2: "Actualitzacions per a la vida",
+                plan3Feature3: "Suport prioritari",
+                plan3Feature4: "Clau de llicència inclosa",
+                plan3Feature5: "Totes les futures funcions",
+                plan3Feature6: "Millor valor",
+                plan3Btn: "Obtenir Craxs RAT Per a la vida",
+                featuredBadge: "Més Popular",
+                footerTelegramBtn: "Uneix-te a Telegram",
+                privacyLink: "Política de Privacitat",
+                aboutLink: "Sobre nosaltres",
+                disclaimerLink: "Aviso Legal",
+                contactLink: "Contacta amb nosaltres",
+                copyrightText: "© 2025 Craxs Software. Eina d'accés remot professional per als experts en ciberseguretat.",
+                disclaimerText: "Craxs RAT està dissenyat únicament per als professionals de la ciberseguretat autoritzats i hackers ètics."
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            
+            // Update all text elements
+            document.getElementById('heroBadge').textContent = t.heroBadge;
+            document.getElementById('heroTitle').textContent = t.heroTitle;
+            document.getElementById('heroDescription').textContent = t.heroDescription;
+            document.getElementById('telegramBtn').textContent = t.telegramBtn;
+            document.getElementById('heroFeature1').textContent = t.heroFeature1;
+            document.getElementById('heroFeature2').textContent = t.heroFeature2;
+            document.getElementById('heroFeature3').textContent = t.heroFeature3;
+            document.getElementById('showcaseTitle').textContent = t.showcaseTitle;
+            document.getElementById('showcaseSubtitle').textContent = t.showcaseSubtitle;
+            document.getElementById('showcaseCard1Title').textContent = t.showcaseCard1Title;
+            document.getElementById('showcaseCard1Desc').textContent = t.showcaseCard1Desc;
+            document.getElementById('showcaseCard2Title').textContent = t.showcaseCard2Title;
+            document.getElementById('showcaseCard2Desc').textContent = t.showcaseCard2Desc;
+            document.getElementById('showcaseCard3Title').textContent = t.showcaseCard3Title;
+            document.getElementById('showcaseCard3Desc').textContent = t.showcaseCard3Desc;
+            document.getElementById('featuresTitle').textContent = t.featuresTitle;
+            document.getElementById('featuresSubtitle').textContent = t.featuresSubtitle;
+            document.getElementById('feature1Title').textContent = t.feature1Title;
+            document.getElementById('feature1Desc').textContent = t.feature1Desc;
+            document.getElementById('feature2Title').textContent = t.feature2Title;
+            document.getElementById('feature2Desc').textContent = t.feature2Desc;
+            document.getElementById('feature3Title').textContent = t.feature3Title;
+            document.getElementById('feature3Desc').textContent = t.feature3Desc;
+            document.getElementById('feature4Title').textContent = t.feature4Title;
+            document.getElementById('feature4Desc').textContent = t.feature4Desc;
+            document.getElementById('pricingTitle').textContent = t.pricingTitle;
+            document.getElementById('pricingSubtitle').textContent = t.pricingSubtitle;
+            document.getElementById('plan1Name').textContent = t.plan1Name;
+            document.getElementById('plan1Desc').textContent = t.plan1Desc;
+            document.getElementById('plan1Price').textContent = t.plan1Price;
+            document.getElementById('plan1Period').textContent = t.plan1Period;
+            document.getElementById('plan1Feature1').textContent = t.plan1Feature1;
+            document.getElementById('plan1Feature2').textContent = t.plan1Feature2;
+            document.getElementById('plan1Feature3').textContent = t.plan1Feature3;
+            document.getElementById('plan1Feature4').textContent = t.plan1Feature4;
+            document.getElementById('plan1Btn').textContent = t.plan1Btn;
+            document.getElementById('plan2Name').textContent = t.plan2Name;
+            document.getElementById('plan2Desc').textContent = t.plan2Desc;
+            document.getElementById('plan2Price').textContent = t.plan2Price;
+            document.getElementById('plan2Period').textContent = t.plan2Period;
+            document.getElementById('plan2Feature1').textContent = t.plan2Feature1;
+            document.getElementById('plan2Feature2').textContent = t.plan2Feature2;
+            document.getElementById('plan2Feature3').textContent = t.plan2Feature3;
+            document.getElementById('plan2Feature4').textContent = t.plan2Feature4;
+            document.getElementById('plan2Feature5').textContent = t.plan2Feature5;
+            document.getElementById('plan2Btn').textContent = t.plan2Btn;
+            document.getElementById('plan3Name').textContent = t.plan3Name;
+            document.getElementById('plan3Desc').textContent = t.plan3Desc;
+            document.getElementById('plan3Price').textContent = t.plan3Price;
+            document.getElementById('plan3Period').textContent = t.plan3Period;
+            document.getElementById('plan3Feature1').textContent = t.plan3Feature1;
+            document.getElementById('plan3Feature2').textContent = t.plan3Feature2;
+            document.getElementById('plan3Feature3').textContent = t.plan3Feature3;
+            document.getElementById('plan3Feature4').textContent = t.plan3Feature4;
+            document.getElementById('plan3Feature5').textContent = t.plan3Feature5;
+            document.getElementById('plan3Feature6').textContent = t.plan3Feature6;
+            document.getElementById('plan3Btn').textContent = t.plan3Btn;
+            document.getElementById('featuredBadge').textContent = t.featuredBadge;
+            document.getElementById('footerTelegramBtn').textContent = t.footerTelegramBtn;
+            document.getElementById('privacyLink').textContent = t.privacyLink;
+            document.getElementById('aboutLink').textContent = t.aboutLink;
+            document.getElementById('disclaimerLink').textContent = t.disclaimerLink;
+            document.getElementById('contactLink').textContent = t.contactLink;
+            document.getElementById('copyrightText').textContent = t.copyrightText;
+            document.getElementById('disclaimerText').textContent = t.disclaimerText;
+            
+            // Update language selector
+            document.getElementById('languageSelect').value = lang;
+        }
+
+        // Initialize with English
+        changeLanguage('en');
+    </script>
+</body>
+</html>
